@@ -16,8 +16,6 @@ import java.util.Set;
 @EqualsAndHashCode(of = {"id"})
 @Entity
 @Table(name = "usr")
-@Getter
-@Setter
 public class User implements UserDetails {
 
     static final long SerialVersionUID = 1;
