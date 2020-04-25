@@ -1,5 +1,7 @@
 package ua.exhibition.controller;
 
+import static ua.exhibition.controller.Constants.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -7,16 +9,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ua.exhibition.model.domain.User;
-import ua.exhibition.model.service.SubscribeService;
+import ua.exhibition.domain.entity.User;
+import ua.exhibition.service.SubscribeService;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping(USER_MAPPING)
 public class SubscribeController {
+
     @Autowired
     private SubscribeService subscribeService;
 
-    @GetMapping("subscribe/{user}")
+    @GetMapping(SUBSCRIBE_MAPPING)
     public String subscribe(
             @AuthenticationPrincipal User currentUser,
             @PathVariable User user
@@ -26,7 +29,7 @@ public class SubscribeController {
         return "redirect:/user-exhibitions/" + user.getId();
     }
 
-    @GetMapping("unsubscribe/{user}")
+    @GetMapping(UNSUBSCRIBE_MAPPING)
     public String unsubscribe(
             @AuthenticationPrincipal User currentUser,
             @PathVariable User user
@@ -36,21 +39,21 @@ public class SubscribeController {
         return "redirect:/user-exhibitions/" + user.getId();
     }
 
-    @GetMapping("{type}/{user}/list")
+    @GetMapping(USER_LIST_MAPPING)
     public String userList(
             Model model,
             @PathVariable User user,
             @PathVariable String type
     ) {
         model.addAttribute("userChannel", user);
-        model.addAttribute("type", type);
+        model.addAttribute(TYPE, type);
 
-        if ("subscriptions".equals(type)) {
-            model.addAttribute("users", user.getSubscriptions());
+        if (SUBSCRIPTIONS.equals(type)) {
+            model.addAttribute(USERS, user.getSubscriptions());
         } else {
-            model.addAttribute("users", user.getSubscribers());
+            model.addAttribute(USERS, user.getSubscribers());
         }
 
-        return "subscriptions";
+        return PAGE_SUBSCRIPTIONS;
     }
 }

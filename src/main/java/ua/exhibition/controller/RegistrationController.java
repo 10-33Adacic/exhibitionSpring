@@ -1,5 +1,7 @@
 package ua.exhibition.controller;
 
+import static ua.exhibition.controller.Constants.*;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,19 +11,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import ua.exhibition.model.domain.User;
-import ua.exhibition.model.domain.dto.CaptchaResponseDto;
-import ua.exhibition.model.service.RegistrationService;
+import ua.exhibition.domain.entity.User;
+import ua.exhibition.domain.dto.CaptchaResponseDto;
+import ua.exhibition.service.RegistrationService;
+import ua.exhibition.util.ControllerUtils;
 
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 
-@Controller("/")
+@Controller(MAIN_MAPPING)
 public class RegistrationController {
-    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
     private final RegistrationService registrationService;
+
     private final RestTemplate restTemplate;
 
     public RegistrationController(RegistrationService registrationService, RestTemplate restTemplate) {
@@ -29,55 +32,56 @@ public class RegistrationController {
         this.restTemplate = restTemplate;
     }
 
-    @Value("${recaptcha.secret}")
+    @Value(RECAPTCHA_SECRET_VALUE)
     private String secret;
 
-    @GetMapping("registration")
+    @GetMapping(REGISTRATION_MAPPING)
     public String registration() {
-        return "registration";
+        return PAGE_REGISTRATION;
     }
 
-    //TODO убрать много if
-    @PostMapping("registration")
+    @PostMapping(REGISTRATION_MAPPING)
     public String addUser(
             @RequestParam String passwordConfirm,
-            @RequestParam("g-recaptcha-response") String captchaResponse,
+            @RequestParam(G_RECAPTCHA_RESPONSE) String captchaResponse,
             @Valid User user,
             BindingResult bindingResult,
             Model model
     ) {
+        boolean isConfirmEmpty = StringUtils.isEmpty(passwordConfirm);
+        if (isConfirmEmpty) {
+            model.addAttribute(PASSWORD_CONFIRM_ERROR, PASSWORD_CONFIRM_ERROR_MESSAGE);
+        }
+
+        boolean isConfirmInvalid = user.getPassword() != null && !user.getPassword().equals(passwordConfirm);
+        if (isConfirmInvalid) {
+            model.addAttribute(PASSWORD_ERROR, PASSWORD_ERROR_MESSAGE);
+        }
+
         String url = String.format(CAPTCHA_URL, secret, captchaResponse);
         CaptchaResponseDto response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
-
         if (!response.isSuccess()) {
-            model.addAttribute("captchaError", "Fill captcha");
+            model.addAttribute(CAPTCHA_ERROR, CAPTCHA_ERROR_MESSAGE);
         }
 
-        boolean isConfirmEmpty = StringUtils.isEmpty(passwordConfirm);
-        boolean isConfirmInvalid = user.getPassword() != null && !user.getPassword().equals(passwordConfirm);
-
-        if (isConfirmEmpty) {
-            model.addAttribute("passwordConfirmError", "Password confirmation cannot be empty");
-        }
-
-        if (isConfirmInvalid) {
-            model.addAttribute("passwordError", "Passwords are different!");
-        }
-
-        if (isConfirmEmpty || isConfirmInvalid || bindingResult.hasErrors() || !response.isSuccess()) {
+        if (isConfirmEmpty
+                || isConfirmInvalid
+                || bindingResult.hasErrors()
+                || !response.isSuccess()
+        ) {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
 
             model.mergeAttributes(errors);
 
-            return "registration";
+            return PAGE_REGISTRATION;
         }
 
         if (!registrationService.addUser(user)) {
-            model.addAttribute("usernameError", "User is exists!");
+            model.addAttribute(USERNAME_ERROR, USERNAME_ERROR_MESSAGE);
 
-            return "registration";
+            return PAGE_REGISTRATION;
         }
 
-        return "redirect:/login";
+        return "redirect:" + URL_LOGIN;
     }
 }

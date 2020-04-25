@@ -1,5 +1,7 @@
 package ua.exhibition.controller;
 
+import static ua.exhibition.controller.Constants.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,40 +14,61 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ua.exhibition.model.domain.Exhibition;
-import ua.exhibition.model.domain.User;
-import ua.exhibition.model.service.ExhibitionService;
+import ua.exhibition.domain.entity.Exhibition;
+import ua.exhibition.domain.entity.User;
+import ua.exhibition.service.ExhibitionService;
 
 @Controller
 public class ExhibitionEditController {
+
     @Autowired
     private ExhibitionService exhibitionService;
 
-    @GetMapping("/user-exhibitions/{user}")
+    @GetMapping(USER_EXHIBITIONS_MAPPING)
     public String userExhibitions(
         @AuthenticationPrincipal User currentUser,
         @PathVariable User user,
-        Model model,
         @RequestParam(required = false) Exhibition exhibition,
-        @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
+        @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
+        Model model
     ) {
-        /*Set<Exhibition> exhibitions = user.getExhibitions();*/
-        /*model.addAttribute("exhibitions", exhibitions);*/
         model.addAttribute("exhibition", exhibition);
         model.addAttribute("isCurrentUser", currentUser.equals(user));
         model.addAttribute("userChannel", user);
         model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
         model.addAttribute("subscribersCount", user.getSubscribers().size());
         model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
-        
+
         model.addAttribute("url", "/user-exhibitions/" + user.getId());
         model.addAttribute("page", exhibitionService.findByAuthor(user, pageable));
 
         return "userExhibitions";
     }
 
-    @PostMapping("/user-exhibitions/{user}")
-    public String updateMessage(
+    @GetMapping(EDIT_EXHIBITION_MAPPING)
+    public String editExhibition (
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable User user,
+            @PathVariable Exhibition exhibition,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
+            Model model
+    ) {
+        model.addAttribute("exhibition", exhibition);
+        model.addAttribute("isCurrentUser", currentUser.equals(user));
+        model.addAttribute("userChannel", user);
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
+
+        model.addAttribute("url", "/user-exhibitions/" + user.getId() + "/" + exhibition.getId());
+        model.addAttribute("page", exhibitionService.findByAuthor(user, pageable));
+        model.addAttribute("deleteFactor", true);
+
+        return "userExhibitions";
+    }
+
+    @PostMapping(UPDATE_EXHIBITION_MAPPING)
+    public String updateExhibition(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long user,
             @RequestParam("id") Exhibition exhibition,
@@ -53,7 +76,6 @@ public class ExhibitionEditController {
             @RequestParam String showroom,
             @RequestParam String description
     ) {
-
         if (exhibition.getAuthor().equals(currentUser)) {
             if (!StringUtils.isEmpty(name)) {
                 exhibition.setName(name);
@@ -71,5 +93,14 @@ public class ExhibitionEditController {
         }
 
         return "redirect:/user-exhibitions/" + user;
+    }
+
+    @PostMapping(DELETE_EXHIBITION_MAPPING)
+    public String deleteExhibition(
+            @RequestParam("exhibitionId") Long id
+    ) {
+        exhibitionService.deleteById(id);
+
+        return "redirect:/main";
     }
 }

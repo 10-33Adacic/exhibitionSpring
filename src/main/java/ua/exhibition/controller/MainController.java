@@ -1,5 +1,7 @@
 package ua.exhibition.controller;
 
+import static ua.exhibition.controller.Constants.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +14,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ua.exhibition.model.domain.Exhibition;
-import ua.exhibition.model.domain.User;
-import ua.exhibition.model.service.ExhibitionService;
+import ua.exhibition.domain.entity.Exhibition;
+import ua.exhibition.domain.entity.User;
+import ua.exhibition.service.ExhibitionService;
+import ua.exhibition.util.ControllerUtils;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -24,12 +27,12 @@ public class MainController {
     @Autowired
     private ExhibitionService exhibitionService;
 
-    @GetMapping("/")
+    @GetMapping(MAIN_MAPPING)
     public String mainPage() {
-        return "home";
+        return PAGE_HOME;
     }
 
-    @GetMapping("/main")
+    @GetMapping(MAIN_FORM_MAPPING)
     public String mainForm(
             @RequestParam(required = false, defaultValue = "") String showroom,
             Model model,
@@ -38,21 +41,19 @@ public class MainController {
         Page<Exhibition> page;
 
         if(!showroom.isEmpty()) {
-            page =
-                    exhibitionService.findByShowroom(showroom, pageable);
+            page = exhibitionService.findByShowroom(showroom, pageable);
         } else {
-            page =
-                    exhibitionService.findAll(pageable);
+            page = exhibitionService.findAll(pageable);
         }
 
         model.addAttribute("page", page);
         model.addAttribute("url", "/main");
-        model.addAttribute("showroom", showroom);
+        model.addAttribute(SHOWROOM, showroom);
 
-        return "mainPage";
+        return PAGE_MAIN_PAGE;
     }
 
-    @PostMapping("/main")
+    @PostMapping(MAIN_FORM_MAPPING)
     public String add(
             @AuthenticationPrincipal User user,
             @Valid Exhibition exhibition,
@@ -75,6 +76,6 @@ public class MainController {
         model.addAttribute("url", "/main");
         model.addAttribute("page", exhibitionService.findAll(pageable));
 
-        return "mainPage";
+        return PAGE_MAIN_PAGE;
     }
 }

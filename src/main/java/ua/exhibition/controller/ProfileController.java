@@ -1,5 +1,7 @@
 package ua.exhibition.controller;
 
+import static ua.exhibition.controller.Constants.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -8,26 +10,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ua.exhibition.model.domain.User;
-import ua.exhibition.model.service.ProfileService;
+import ua.exhibition.domain.entity.User;
+import ua.exhibition.service.ProfileService;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping(USER_MAPPING)
 public class ProfileController {
+
     @Autowired
     private ProfileService profileService;
 
-    @GetMapping("/profile")
+    @GetMapping(PROFILE_MAPPING)
     public String profile(
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        model.addAttribute("username", user.getUsername());
+        model.addAttribute(USERNAME, user.getUsername());
 
-        return "profile";
+        return PAGE_PROFILE;
     }
 
-    @PostMapping("/profile")
+    @PostMapping(PROFILE_MAPPING)
     public String profile(
             @AuthenticationPrincipal User user,
             @RequestParam String username,
@@ -35,6 +38,6 @@ public class ProfileController {
     ) {
         profileService.updateProfile(user, username, password);
 
-        return "redirect:/user/profile";
+        return "redirect:" + URL_USER_PROFILE;
     }
 }
