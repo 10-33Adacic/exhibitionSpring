@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ua.yakovenko</groupId>
+    <groupId>ua.exhibition</groupId>
     <artifactId>exhibition</artifactId>
     <version>0.1</version>
 
@@ -24,9 +24,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- TODO: fix dependency-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-starter-devtools</artifactId>
+            <artifactId>spring-boot-devtools</artifactId>
+<!--            <version>1.5.2.RELEASE</version>-->
             <optional>true</optional>
         </dependency>
 
