@@ -51,7 +51,7 @@ public class SalesController {
             userService.updateUserBalance(user, money);
         }
 
-        model.addAttribute(USERNAME, user.getUsername());
+        model.addAttribute("username", user.getUsername());
         model.addAttribute(BALANCE, user.getAccountMoney());
 
         if (id != null) {
@@ -59,7 +59,7 @@ public class SalesController {
             model.addAttribute("exhibition", exhibition);
 
             if (user.getBoughtTickets().contains(exhibition)) {
-                model.addAttribute(BUY_ERROR, BUY_ERROR_MESSAGE);
+                model.addAttribute("buyError", BUY_ERROR_MESSAGE);
             }
 
             return PAGE_SALES;
@@ -93,8 +93,8 @@ public class SalesController {
             salesService.addTicket(user, ticketId);
 
         } catch (BuyException e) {
-            model.addAttribute(BUY_ERROR, BUY_ERROR_MONEY);
-            model.addAttribute(USERNAME, user.getUsername());
+            model.addAttribute("buyError", BUY_ERROR_MONEY);
+            model.addAttribute("username", user.getUsername());
             model.addAttribute(BALANCE, user.getAccountMoney());
 
             Exhibition exhibition = exhibitionService.findById(ticketId);

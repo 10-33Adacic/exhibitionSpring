@@ -29,7 +29,7 @@ public class MainController {
 
     @GetMapping(MAIN_MAPPING)
     public String mainPage() {
-        return PAGE_HOME;
+        return "home";
     }
 
     @GetMapping(MAIN_FORM_MAPPING)
@@ -48,9 +48,9 @@ public class MainController {
 
         model.addAttribute("page", page);
         model.addAttribute("url", "/main");
-        model.addAttribute(SHOWROOM, showroom);
+        model.addAttribute("showroom", showroom);
 
-        return PAGE_MAIN_PAGE;
+        return "mainPage";
     }
 
     @PostMapping(MAIN_FORM_MAPPING)
@@ -76,6 +76,6 @@ public class MainController {
         model.addAttribute("url", "/main");
         model.addAttribute("page", exhibitionService.findAll(pageable));
 
-        return PAGE_MAIN_PAGE;
+        return "mainPage";
     }
 }

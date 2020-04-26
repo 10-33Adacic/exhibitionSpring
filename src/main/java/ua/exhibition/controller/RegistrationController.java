@@ -37,31 +37,31 @@ public class RegistrationController {
 
     @GetMapping(REGISTRATION_MAPPING)
     public String registration() {
-        return PAGE_REGISTRATION;
+        return "registration";
     }
 
     @PostMapping(REGISTRATION_MAPPING)
     public String addUser(
             @RequestParam String passwordConfirm,
-            @RequestParam(G_RECAPTCHA_RESPONSE) String captchaResponse,
+            @RequestParam("g-recaptcha-response") String captchaResponse,
             @Valid User user,
             BindingResult bindingResult,
             Model model
     ) {
         boolean isConfirmEmpty = StringUtils.isEmpty(passwordConfirm);
         if (isConfirmEmpty) {
-            model.addAttribute(PASSWORD_CONFIRM_ERROR, PASSWORD_CONFIRM_ERROR_MESSAGE);
+            model.addAttribute("passwordConfirmError", "Password confirmation cannot be empty");
         }
 
         boolean isConfirmInvalid = user.getPassword() != null && !user.getPassword().equals(passwordConfirm);
         if (isConfirmInvalid) {
-            model.addAttribute(PASSWORD_ERROR, PASSWORD_ERROR_MESSAGE);
+            model.addAttribute("passwordError", "Passwords are different!");
         }
 
-        String url = String.format(CAPTCHA_URL, secret, captchaResponse);
+        String url = String.format("https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s", secret, captchaResponse);
         CaptchaResponseDto response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
         if (!response.isSuccess()) {
-            model.addAttribute(CAPTCHA_ERROR, CAPTCHA_ERROR_MESSAGE);
+            model.addAttribute("captchaError", "Fill captcha");
         }
 
         if (isConfirmEmpty
@@ -73,15 +73,15 @@ public class RegistrationController {
 
             model.mergeAttributes(errors);
 
-            return PAGE_REGISTRATION;
+            return "registration";
         }
 
         if (!registrationService.addUser(user)) {
-            model.addAttribute(USERNAME_ERROR, USERNAME_ERROR_MESSAGE);
+            model.addAttribute("usernameError", "User already exists!");
 
-            return PAGE_REGISTRATION;
+            return "registration";
         }
 
-        return "redirect:" + URL_LOGIN;
+        return "redirect:/login";
     }
 }

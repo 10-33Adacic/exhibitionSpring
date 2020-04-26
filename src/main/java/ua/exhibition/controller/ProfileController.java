@@ -25,9 +25,9 @@ public class ProfileController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        model.addAttribute(USERNAME, user.getUsername());
+        model.addAttribute("username", user.getUsername());
 
-        return PAGE_PROFILE;
+        return "profile";
     }
 
     @PostMapping(PROFILE_MAPPING)
@@ -38,6 +38,6 @@ public class ProfileController {
     ) {
         profileService.updateProfile(user, username, password);
 
-        return "redirect:" + URL_USER_PROFILE;
+        return "redirect:/user/profile";
     }
 }
