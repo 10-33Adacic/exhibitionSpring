@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -24,13 +24,13 @@ public class ExhibitionEditController {
     @Autowired
     private ExhibitionService exhibitionService;
 
-    @GetMapping(USER_EXHIBITIONS_MAPPING)
+    @GetMapping("/user-exhibitions/{user}")
     public String userExhibitions(
-        @AuthenticationPrincipal User currentUser,
-        @PathVariable User user,
-        @RequestParam(required = false) Exhibition exhibition,
-        @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
-        Model model
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable User user,
+            @RequestParam(required = false) Exhibition exhibition,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
+            Model model
     ) {
         model.addAttribute("exhibition", exhibition);
         model.addAttribute("isCurrentUser", currentUser.equals(user));
@@ -45,7 +45,7 @@ public class ExhibitionEditController {
         return "userExhibitions";
     }
 
-    @GetMapping(EDIT_EXHIBITION_MAPPING)
+    @GetMapping("/user-exhibitions/{user}/{exhibition}")
     public String editExhibition (
             @AuthenticationPrincipal User currentUser,
             @PathVariable User user,
@@ -67,7 +67,7 @@ public class ExhibitionEditController {
         return "userExhibitions";
     }
 
-    @PostMapping(UPDATE_EXHIBITION_MAPPING)
+    @PostMapping("/user-exhibitions/{user}")
     public String updateExhibition(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long user,
@@ -95,7 +95,7 @@ public class ExhibitionEditController {
         return "redirect:/user-exhibitions/" + user;
     }
 
-    @PostMapping(DELETE_EXHIBITION_MAPPING)
+    @PostMapping("/user-exhibitions/delete")
     public String deleteExhibition(
             @RequestParam("exhibitionId") Long id
     ) {

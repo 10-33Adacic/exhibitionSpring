@@ -1,7 +1,7 @@
 <#import "parts/page.ftl" as p>
 
 <@p.page>
-<h3><@spring.message "label.username"/>${userChannel.username}</h3>
+    <h3><@spring.message "label.username"/>${userChannel.username}</h3>
 
     <#if !isCurrentUser>
         <#if isSubscriber>
@@ -51,6 +51,6 @@
     <#if isCurrentUser>
         <#include "parts/exhibitionEdit.ftl"/>
     </#if>
-        <#include "parts/exhibitionList.ftl"/>
+    <#include "parts/exhibitionList.ftl"/>
 
 </@p.page>

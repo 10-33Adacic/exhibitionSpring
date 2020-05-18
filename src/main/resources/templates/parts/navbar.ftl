@@ -1,5 +1,5 @@
 <#include "security.ftl">
-<#import "logut.ftl" as logout>
+<#import "logout.ftl" as logout>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="/">
@@ -64,6 +64,6 @@
             <@spring.message "language.en"/>
         </a>
 
-    <#include "logut.ftl"/>
+        <#include "logout.ftl"/>
     </div>
 </nav>

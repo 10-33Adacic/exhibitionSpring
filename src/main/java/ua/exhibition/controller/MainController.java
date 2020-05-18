@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,12 +27,12 @@ public class MainController {
     @Autowired
     private ExhibitionService exhibitionService;
 
-    @GetMapping(MAIN_MAPPING)
+    @GetMapping("/")
     public String mainPage() {
         return "home";
     }
 
-    @GetMapping(MAIN_FORM_MAPPING)
+    @GetMapping("/main")
     public String mainForm(
             @RequestParam(required = false, defaultValue = "") String showroom,
             Model model,
@@ -53,7 +53,7 @@ public class MainController {
         return "mainPage";
     }
 
-    @PostMapping(MAIN_FORM_MAPPING)
+    @PostMapping("/main")
     public String add(
             @AuthenticationPrincipal User user,
             @Valid Exhibition exhibition,

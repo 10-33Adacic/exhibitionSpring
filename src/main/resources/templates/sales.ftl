@@ -37,7 +37,7 @@
                         <input type="hidden" value="${exhibition.id}" name="exhibitionId">
                         <input type="hidden" name="_csrf" value="${_csrf.token}" />
                         <button type="submit" class="btn btn-link">
-                                <@spring.message "button.buy_ticket"/>
+                            <@spring.message "button.buy_ticket"/>
                         </button>
                     </form>
                 </div>

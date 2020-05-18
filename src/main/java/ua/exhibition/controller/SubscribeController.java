@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,13 +13,13 @@ import ua.exhibition.domain.entity.User;
 import ua.exhibition.service.SubscribeService;
 
 @Controller
-@RequestMapping(USER_MAPPING)
+@RequestMapping("/user")
 public class SubscribeController {
 
     @Autowired
     private SubscribeService subscribeService;
 
-    @GetMapping(SUBSCRIBE_MAPPING)
+    @GetMapping("subscribe/{user}")
     public String subscribe(
             @AuthenticationPrincipal User currentUser,
             @PathVariable User user
@@ -29,7 +29,7 @@ public class SubscribeController {
         return "redirect:/user-exhibitions/" + user.getId();
     }
 
-    @GetMapping(UNSUBSCRIBE_MAPPING)
+    @GetMapping("unsubscribe/{user}")
     public String unsubscribe(
             @AuthenticationPrincipal User currentUser,
             @PathVariable User user
@@ -39,21 +39,21 @@ public class SubscribeController {
         return "redirect:/user-exhibitions/" + user.getId();
     }
 
-    @GetMapping(USER_LIST_MAPPING)
+    @GetMapping("{type}/{user}/list")
     public String userList(
             Model model,
             @PathVariable User user,
             @PathVariable String type
     ) {
         model.addAttribute("userChannel", user);
-        model.addAttribute(TYPE, type);
+        model.addAttribute("type", type);
 
-        if (SUBSCRIPTIONS.equals(type)) {
-            model.addAttribute(USERS, user.getSubscriptions());
+        if ("subscriptions".equals(type)) {
+            model.addAttribute("users", user.getSubscriptions());
         } else {
-            model.addAttribute(USERS, user.getSubscribers());
+            model.addAttribute("users", user.getSubscribers());
         }
 
-        return PAGE_SUBSCRIPTIONS;
+        return "subscriptions";
     }
 }

@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +32,7 @@ public class SalesController {
         this.exhibitionService = exhibitionService;
     }
 
-    @GetMapping(BUY_TICKET_MAPPING)
+    @GetMapping("/sales/{user}")
     public String buyTicket(
             @PathVariable User user
 
@@ -40,10 +40,10 @@ public class SalesController {
         return "redirect:/main";
     }
 
-    @PostMapping(BUY_TICKET_MAPPING)
+    @PostMapping("/sales/{user}")
     public String buyAndUpdate(
             @PathVariable User user,
-            @RequestParam(value = PARAM_MONEY, required = false) Long money,
+            @RequestParam(value = "money", required = false) Long money,
             @RequestParam(value = "exhibitionId", required = false) Long id,
             Model model
     ) {
@@ -52,61 +52,61 @@ public class SalesController {
         }
 
         model.addAttribute("username", user.getUsername());
-        model.addAttribute(BALANCE, user.getAccountMoney());
+        model.addAttribute("balance", user.getAccountMoney());
 
         if (id != null) {
             Exhibition exhibition = exhibitionService.findById(id);
             model.addAttribute("exhibition", exhibition);
 
             if (user.getBoughtTickets().contains(exhibition)) {
-                model.addAttribute("buyError", BUY_ERROR_MESSAGE);
+                model.addAttribute("buyError", "You have already bought this ticket");
             }
 
-            return PAGE_SALES;
+            return "sales";
         }
 
-        return PAGE_SALES;
+        return "sales";
     }
 
-    @GetMapping(BOUGHT_TICKETS_MAPPING)
+    @GetMapping("bought-tickets/{user}")
     public String salesUser(
             @PathVariable User user,
             Model model
     ){
         List<Exhibition> tickets = salesService.findUserTickets(user);
-        model.addAttribute(TICKETS, tickets);
+        model.addAttribute("tickets", tickets);
 
-        return PAGE_SALES_USER;
+        return "salesUser";
     }
 
 
-    @PostMapping(BOUGHT_TICKETS_MAPPING)
+    @PostMapping("bought-tickets/{user}")
     public String salesUser(
             @PathVariable User user,
             @RequestParam Long ticketId,
             Model model
     ) {
-        model.addAttribute(USER, user);
+        model.addAttribute("user", user);
 
         try {
 
             salesService.addTicket(user, ticketId);
 
         } catch (BuyException e) {
-            model.addAttribute("buyError", BUY_ERROR_MONEY);
+            model.addAttribute("buyError", "Not enough money!");
             model.addAttribute("username", user.getUsername());
-            model.addAttribute(BALANCE, user.getAccountMoney());
+            model.addAttribute("balance", user.getAccountMoney());
 
             Exhibition exhibition = exhibitionService.findById(ticketId);
             model.addAttribute("exhibition", exhibition);
 
-            return PAGE_SALES;
+            return "sales";
         }
 
         List<Exhibition> tickets = salesService.findUserTickets(user);
 
-        model.addAttribute(TICKETS, tickets);
+        model.addAttribute("tickets", tickets);
 
-        return PAGE_SALES_USER;
+        return "salesUser";
     }
 }

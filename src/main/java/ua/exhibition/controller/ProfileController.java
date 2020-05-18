@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,13 +14,13 @@ import ua.exhibition.domain.entity.User;
 import ua.exhibition.service.ProfileService;
 
 @Controller
-@RequestMapping(USER_MAPPING)
+@RequestMapping("/user")
 public class ProfileController {
 
     @Autowired
     private ProfileService profileService;
 
-    @GetMapping(PROFILE_MAPPING)
+    @GetMapping("/profile")
     public String profile(
             @AuthenticationPrincipal User user,
             Model model
@@ -30,7 +30,7 @@ public class ProfileController {
         return "profile";
     }
 
-    @PostMapping(PROFILE_MAPPING)
+    @PostMapping("/profile")
     public String profile(
             @AuthenticationPrincipal User user,
             @RequestParam String username,

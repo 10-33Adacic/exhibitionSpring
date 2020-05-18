@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 
-@Controller(MAIN_MAPPING)
+@Controller("/")
 public class RegistrationController {
 
     private final RegistrationService registrationService;
@@ -32,15 +32,15 @@ public class RegistrationController {
         this.restTemplate = restTemplate;
     }
 
-    @Value(RECAPTCHA_SECRET_VALUE)
+    @Value("${recaptcha.secret}")
     private String secret;
 
-    @GetMapping(REGISTRATION_MAPPING)
+    @GetMapping("registration")
     public String registration() {
         return "registration";
     }
 
-    @PostMapping(REGISTRATION_MAPPING)
+    @PostMapping("registration")
     public String addUser(
             @RequestParam String passwordConfirm,
             @RequestParam("g-recaptcha-response") String captchaResponse,

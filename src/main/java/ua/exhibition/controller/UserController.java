@@ -1,6 +1,6 @@
 package ua.exhibition.controller;
 
-import static ua.exhibition.controller.Constants.*;
+//import static ua.exhibition.controller.Constants.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +15,7 @@ import ua.exhibition.service.UserService;
 import java.util.Map;
 
 @Controller
-@RequestMapping(USER_MAPPING)
+@RequestMapping("/user")
 @PreAuthorize("hasAuthority('SUPER_ADMIN')")
 public class UserController {
 
@@ -26,31 +26,31 @@ public class UserController {
     public String userList(
             Model model
     ) {
-        model.addAttribute(USERS, userService.findAll());
+        model.addAttribute("users", userService.findAll());
 
-        return PAGE_USER_LIST;
+        return "userList";
     }
 
-    @GetMapping(USER_EDIT_MAPPING)
+    @GetMapping("{user}")
     public String userEdit(
             @PathVariable User user,
             Model model
     ) {
-        model.addAttribute(USER, user);
-        model.addAttribute(ROLES, Role.values());
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
 
-        return PAGE_USER_EDIT;
+        return "userEdit";
     }
 
     @PostMapping
     public String userSave(
             @RequestParam String username,
             @RequestParam Map<String, String> form,
-            @RequestParam(PARAM_USER_ID) User user
+            @RequestParam("userId") User user
     ) {
         userService.saveUser(username, form, user);
 
-        return "redirect:" + URL_USER;
+        return "redirect:/user";
     }
 
 }
