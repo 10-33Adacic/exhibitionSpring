@@ -1,7 +1,5 @@
 package ua.exhibition.controller;
 
-//import static ua.exhibition.controller.Constants.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,12 +30,7 @@ public class ExhibitionEditController {
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        model.addAttribute("exhibition", exhibition);
-        model.addAttribute("isCurrentUser", currentUser.equals(user));
-        model.addAttribute("userChannel", user);
-        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
-        model.addAttribute("subscribersCount", user.getSubscribers().size());
-        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
+        addAttributeToModel(currentUser, user, exhibition, model);
 
         model.addAttribute("url", "/user-exhibitions/" + user.getId());
         model.addAttribute("page", exhibitionService.findByAuthor(user, pageable));
@@ -53,12 +46,7 @@ public class ExhibitionEditController {
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        model.addAttribute("exhibition", exhibition);
-        model.addAttribute("isCurrentUser", currentUser.equals(user));
-        model.addAttribute("userChannel", user);
-        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
-        model.addAttribute("subscribersCount", user.getSubscribers().size());
-        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
+        addAttributeToModel(currentUser, user, exhibition, model);
 
         model.addAttribute("url", "/user-exhibitions/" + user.getId() + "/" + exhibition.getId());
         model.addAttribute("page", exhibitionService.findByAuthor(user, pageable));
@@ -102,5 +90,14 @@ public class ExhibitionEditController {
         exhibitionService.deleteById(id);
 
         return "redirect:/main";
+    }
+
+    private void addAttributeToModel(@AuthenticationPrincipal User currentUser, @PathVariable User user, @PathVariable Exhibition exhibition, Model model) {
+        model.addAttribute("exhibition", exhibition);
+        model.addAttribute("isCurrentUser", currentUser.equals(user));
+        model.addAttribute("userChannel", user);
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
     }
 }

@@ -23,10 +23,10 @@ public class RegistrationService {
 
     /**
      *
-     * Add user in DB, if user with doesn't exist with this username.
+     * Add user in DB, if user doesn't exist.
      *
      * @param user
-     * @return
+     * @return {@code true} if user is successfully added
      */
     public boolean addUser(User user) {
         User userFromDb = userRepository.findByUsername(user.getUsername());

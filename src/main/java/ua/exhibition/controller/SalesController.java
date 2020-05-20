@@ -1,7 +1,5 @@
 package ua.exhibition.controller;
 
-//import static ua.exhibition.controller.Constants.*;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
